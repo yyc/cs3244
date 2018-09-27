@@ -10,4 +10,4 @@ for key in keys[:1]:
   with env.begin(write=False) as txn:
     byte_sample = txn.get(key.encode())
   data = pickle.loads(byte_sample, encoding="latin")
-  print(list(data.keys())
+  print(list(data.keys()))
