@@ -28,10 +28,13 @@ from keras.utils.np_utils import to_categorical
 BATCH_SIZE = 20
 
 def new_model():
-  resnet = ResNet50(input_shape=(3,256,256), pooling='avg', include_top=False, weights=None)
+  resnet = ResNet50(input_shape=(3,256,256), pooling='avg', include_top=False, weights='imagenet')
+  # Freeze resnet layers
+  for layer in resnet.layers:
+    layer.trainable = False
   top_model = Sequential()
   top_model.add(Dense(1048, activation='linear'))
-  top_model.add(Dropout(0.05))
+  top_model.add(Dropout(0.2))
   top_model.add(Dense(1048, activation='softmax'))
   model = Model(inputs=resnet.input, outputs=top_model(resnet.output))
   return model
@@ -40,8 +43,8 @@ def open_model(filename):
   return load_model(filename)
 
 def train():
-  model = open_model('baseline_model_sparse_crossentropy.h5')
-#  model = new_model()
+#  model = open_model('baseline_model_dropout.h5')
+  model = new_model()
   data_path = 'data/'
   keys_path = 'data/test_keys.pkl'
   images_path = 'data/images/test'
@@ -60,11 +63,11 @@ def train():
     validation_data=batch_generator(db, batch_size=BATCH_SIZE, partition='val'),
     steps_per_epoch=math.floor(238459 / BATCH_SIZE),
     validation_steps=math.floor(51129 / BATCH_SIZE),
-    epochs=9, 
+    epochs=20, 
     verbose=1
   )
 
-  model.save('baseline_model_sparse_crossentropy.h5')
+  model.save('models/baseline_model_dropout_imagenet.h5')
 
 def batch_generator(db, batch_size=100, partition='train'):
   ids = db['ids_{}'.format(partition)]
