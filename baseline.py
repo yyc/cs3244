@@ -1,3 +1,5 @@
+import argparse
+
 import numpy as np
 import lmdb
 import os
@@ -29,7 +31,8 @@ from keras.preprocessing import image
 from keras.utils.np_utils import to_categorical
 
 BATCH_SIZE = 20
-MODEL_PATH = 'baseline_model_dropout_imagenet.h5'
+DEFAULT_MODEL_PATH = 'baseline_model.h5'
+DEFAULT_NUM_EPOCH = 40
 
 def new_model():
   resnet = ResNet50(input_shape=(3,256,256), pooling='avg', include_top=False, weights='imagenet')
@@ -46,11 +49,16 @@ def new_model():
 def open_model(filename):
   return load_model(filename)
 
-def train():
-  if os.path.exists(MODEL_PATH):
-    model = open_model(MODEL_PATH)
+def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH):
+  # Set directory for model load and save:
+  if model_path is None:
+    model_path = DEFAULT_MODEL_PATH
+  if os.path.exists(model_path):
+    model = open_model(model_path)
   else:
     model = new_model()
+
+  # Set default directories
   data_path = 'data/'
   keys_path = 'data/test_keys.pkl'
   images_path = 'data/images/test'
@@ -69,11 +77,11 @@ def train():
     validation_data=batch_generator(db, batch_size=BATCH_SIZE, partition='val'),
     steps_per_epoch=math.floor(238459 / BATCH_SIZE),
     validation_steps=math.floor(51129 / BATCH_SIZE),
-    epochs=40, 
+    epochs=num_epoch,
     verbose=1
   )
 
-  model.save(MODEL_PATH)
+  model.save(model_path)
 
 def batch_generator(db, batch_size=100, partition='train'):
   ids = db['ids_{}'.format(partition)]
@@ -106,7 +114,11 @@ def batch_generator(db, batch_size=100, partition='train'):
 
 
 def test():
-  model = load_model(MODEL_PATH)
+  model = load_model(DEFAULT_MODEL_PATH)
 
 if __name__ == '__main__':
-  train()
+  parser = argparse.ArgumentParser(description='Baseline NN')
+  parser.add_argument('-p', '--model_path', dest='model_path')
+  parser.add_argument('-e', '--num_epoch', dest='num_epoch', type=int)
+  args = parser.parse_args()
+  train(**vars(args))

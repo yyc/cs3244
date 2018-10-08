@@ -24,6 +24,10 @@ Dataset (contains images and their classification)
     * **key**: 'ids_<partition>', **value**: array, i-th row contains string id of i-th recipe
 
 
+Helper package (/helper)
+* `classes.py` to extract category labels from `classes1M.pkl`
+* `image.py` to show image, has example code to show all images of a particular category
+
 *Others*
 * `mnist.py`, digits classifier created following a tutorial
 * `resnet50.py`, `extract_titles.py` unused?
