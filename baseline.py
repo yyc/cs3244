@@ -19,6 +19,9 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 set_session(tf.Session(config=config))
 
+import keras
+keras.backend.set_image_data_format("channels_first")
+
 from keras.models import Sequential, Model, load_model
 from keras.layers import Dense, Flatten, Dropout
 from keras.applications.resnet50 import ResNet50, preprocess_input, decode_predictions
