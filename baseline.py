@@ -43,7 +43,7 @@ def open_model(filename):
   return load_model(filename)
 
 def train():
-#  model = open_model('baseline_model_dropout.h5')
+#  model = open_model('models/baseline_model_dropout_imagenet.h5')
   model = new_model()
   data_path = 'data/'
   keys_path = 'data/test_keys.pkl'
@@ -63,11 +63,11 @@ def train():
     validation_data=batch_generator(db, batch_size=BATCH_SIZE, partition='val'),
     steps_per_epoch=math.floor(238459 / BATCH_SIZE),
     validation_steps=math.floor(51129 / BATCH_SIZE),
-    epochs=20, 
+    epochs=40, 
     verbose=1
   )
 
-  model.save('models/baseline_model_dropout_imagenet.h5')
+  model.save('models/baseline_correct_indices.h5')
 
 def batch_generator(db, batch_size=100, partition='train'):
   ids = db['ids_{}'.format(partition)]
@@ -88,7 +88,7 @@ def batch_generator(db, batch_size=100, partition='train'):
         continue
       category = category - 1
       for j in range(db['numims_train'][i]):
-        index = db['impos_train'][i][j]
+        index = db['impos_train'][i][j] - 1
         image = db['ims_train'][index]
         images.append(image)
         categories.append(category)
