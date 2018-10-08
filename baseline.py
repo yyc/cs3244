@@ -57,9 +57,9 @@ def train():
   classes_path = 'data/classes1M.pkl'
   db_path = 'data/data.h5'
 
-  classes_file = open(classes_path, 'rb')
-  id2class = pickle.load(classes_file)
-  ind2class = pickle.load(classes_file)
+  # classes_file = open(classes_path, 'rb')
+  # id2class = pickle.load(classes_file)
+  # ind2class = pickle.load(classes_file)
 
   db = h5py.File(db_path, 'r')
 
@@ -80,6 +80,7 @@ def batch_generator(db, batch_size=100, partition='train'):
   classes = db['classes_{}'.format(partition)]
   impos = db['impos_{}'.format(partition)]
   ims = db['ims_{}'.format(partition)]
+  numims = db['numims_{}'.format(partition)]
   partition_size = len(ids)
   while(True):
     images = []
@@ -93,9 +94,9 @@ def batch_generator(db, batch_size=100, partition='train'):
       if category == 0 or category == 1:
         continue
       category = category - 1
-      for j in range(db['numims_train'][i]):
-        index = db['impos_train'][i][j] - 1
-        image = db['ims_train'][index]
+      for j in range(numims[i]):
+        index = impos[i][j] - 1
+        image = ims[index]
         images.append(image)
         categories.append(category)
 
@@ -107,3 +108,5 @@ def batch_generator(db, batch_size=100, partition='train'):
 def test():
   model = load_model(MODEL_PATH)
 
+if __name__ == '__main__':
+  train()
