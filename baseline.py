@@ -19,6 +19,9 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 set_session(tf.Session(config=config))
 
+import keras
+keras.backend.set_image_data_format("channels_first")
+
 from keras.models import Sequential, Model, load_model
 from keras.layers import Dense, Flatten, Dropout
 from keras.applications.resnet50 import ResNet50, preprocess_input, decode_predictions
@@ -26,6 +29,7 @@ from keras.preprocessing import image
 from keras.utils.np_utils import to_categorical
 
 BATCH_SIZE = 20
+MODEL_PATH = 'baseline_model_dropout_imagenet.h5'
 
 def new_model():
   resnet = ResNet50(input_shape=(3,256,256), pooling='avg', include_top=False, weights='imagenet')
@@ -43,17 +47,19 @@ def open_model(filename):
   return load_model(filename)
 
 def train():
-#  model = open_model('baseline_model_dropout.h5')
-  model = new_model()
+  if os.path.exists(MODEL_PATH):
+    model = open_model(MODEL_PATH)
+  else:
+    model = new_model()
   data_path = 'data/'
   keys_path = 'data/test_keys.pkl'
   images_path = 'data/images/test'
   classes_path = 'data/classes1M.pkl'
   db_path = 'data/data.h5'
 
-  classes_file = open(classes_path, 'rb')
-  id2class = pickle.load(classes_file)
-  ind2class = pickle.load(classes_file)
+  # classes_file = open(classes_path, 'rb')
+  # id2class = pickle.load(classes_file)
+  # ind2class = pickle.load(classes_file)
 
   db = h5py.File(db_path, 'r')
 
@@ -63,17 +69,18 @@ def train():
     validation_data=batch_generator(db, batch_size=BATCH_SIZE, partition='val'),
     steps_per_epoch=math.floor(238459 / BATCH_SIZE),
     validation_steps=math.floor(51129 / BATCH_SIZE),
-    epochs=20, 
+    epochs=40, 
     verbose=1
   )
 
-  model.save('models/baseline_model_dropout_imagenet.h5')
+  model.save(MODEL_PATH)
 
 def batch_generator(db, batch_size=100, partition='train'):
   ids = db['ids_{}'.format(partition)]
   classes = db['classes_{}'.format(partition)]
   impos = db['impos_{}'.format(partition)]
   ims = db['ims_{}'.format(partition)]
+  numims = db['numims_{}'.format(partition)]
   partition_size = len(ids)
   while(True):
     images = []
@@ -87,9 +94,9 @@ def batch_generator(db, batch_size=100, partition='train'):
       if category == 0 or category == 1:
         continue
       category = category - 1
-      for j in range(db['numims_train'][i]):
-        index = db['impos_train'][i][j]
-        image = db['ims_train'][index]
+      for j in range(numims[i]):
+        index = impos[i][j] - 1
+        image = ims[index]
         images.append(image)
         categories.append(category)
 
@@ -99,6 +106,7 @@ def batch_generator(db, batch_size=100, partition='train'):
 
 
 def test():
-  model = load_model('baseline_model.h5')
-  
-train()
+  model = load_model(MODEL_PATH)
+
+if __name__ == '__main__':
+  train()

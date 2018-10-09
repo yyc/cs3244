@@ -21,12 +21,12 @@ def batch_extractor(db, new_db, batch_size=100, partition='train'):
     img_ids = db['impos_{}'.format(partition)][ind]
     num_ims = numims[ind]
     img_idx = [img_ids[i] for i in range(num_ims)]
-    new_ids = [len(new_img_ids) + i if i < num_ims else 0 for i in range(len(img_ids))]
+    new_ids = [len(new_img_ids) + i + 1 if i < num_ims else 0 for i in range(len(img_ids))]
     new_impos.append(new_ids)
     new_img_ids.extend(img_idx)
 
   new_db.create_dataset('impos_{}'.format(partition), data=new_impos)
-  new_db.create_dataset('ims_{}'.format(partition), data=[ims[id] for id in new_img_ids])
+  new_db.create_dataset('ims_{}'.format(partition), data=[ims[id - 1] for id in new_img_ids])
   return new_db
 
   
