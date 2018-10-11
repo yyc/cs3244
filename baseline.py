@@ -29,6 +29,7 @@ from keras.layers import Dense, Flatten, Dropout
 from keras.applications.resnet50 import ResNet50, preprocess_input, decode_predictions
 from keras.preprocessing import image
 from keras.utils.np_utils import to_categorical
+from keras.callbacks import ModelCheckpoint
 
 BATCH_SIZE = 20
 DEFAULT_MODEL_PATH = 'baseline_model.h5'
@@ -49,15 +50,24 @@ def new_model():
 def open_model(filename):
   return load_model(filename)
 
-def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH):
+def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH, checkpoint_path=None):
   # Set directory for model load and save:
   if model_path is None:
     model_path = DEFAULT_MODEL_PATH
   if os.path.exists(model_path):
     model = open_model(model_path)
+    print("loaded model {}".format(model_path))
   else:
     model = new_model()
+    print("initialized new model")
 
+  if num_epoch is None:
+    num_epoch = DEFAULT_NUM_EPOCH
+
+  callbacks = []
+  if checkpoint_path is not None:
+    checkpointer = ModelCheckpoint(checkpoint_path, monitor="val_acc", mode="max", save_best_only=True, save_weights_only=True)
+    callbacks.append(checkpointer)
   # Set default directories
   data_path = 'data/'
   keys_path = 'data/test_keys.pkl'
@@ -78,7 +88,8 @@ def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH):
     steps_per_epoch=math.floor(238459 / BATCH_SIZE),
     validation_steps=math.floor(51129 / BATCH_SIZE),
     epochs=num_epoch,
-    verbose=1
+    verbose=1,
+    callbacks=callbacks
   )
 
   model.save(model_path)
@@ -120,5 +131,6 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Baseline NN')
   parser.add_argument('-p', '--model_path', dest='model_path')
   parser.add_argument('-e', '--num_epoch', dest='num_epoch', type=int)
+  parser.add_argument('-c', '--checkpoint', dest='checkpoint_path')
   args = parser.parse_args()
   train(**vars(args))
