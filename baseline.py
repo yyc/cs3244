@@ -121,7 +121,7 @@ def batch_generator(db, batch_size=100, partition='train'):
 
     batch_x = np.array(images)
     batch_y = to_categorical(categories, 1048)
-    yield( batch_x, batch_y )
+    yield (batch_x, batch_y)
 
 
 def test():
@@ -130,7 +130,7 @@ def test():
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Baseline NN')
   parser.add_argument('-p', '--model_path', dest='model_path')
-  parser.add_argument('-e', '--num_epoch', dest='num_epoch', type=int)
+  parser.add_argument('-e', '--num_epoch', dest='num_epoch', default=DEFAULT_NUM_EPOCH, type=int)
   parser.add_argument('-c', '--checkpoint', dest='checkpoint_path')
   args = parser.parse_args()
   train(**vars(args))
