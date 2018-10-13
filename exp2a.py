@@ -82,7 +82,7 @@ def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH):
                       'food_category': 'categorical_crossentropy'},
                 optimizer='SGD', metrics=['accuracy'])
   model.fit_generator(
-    batch_generator(db, batch_size=BATCH_SIZE,partition='val'),
+    batch_generator(db, batch_size=BATCH_SIZE,partition='train'),
     validation_data=batch_generator(db, batch_size=BATCH_SIZE, partition='val'),
     steps_per_epoch=math.floor(238459 / BATCH_SIZE),
     validation_steps=math.floor(51129 / BATCH_SIZE),
