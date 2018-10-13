@@ -50,7 +50,7 @@ def new_model():
 def open_model(filename):
   return load_model(filename)
 
-def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH, checkpoint_path=None):
+def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH, checkpoint_path=None, weights_path=None):
   # Set directory for model load and save:
   if model_path is None:
     model_path = DEFAULT_MODEL_PATH
@@ -61,12 +61,16 @@ def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH, checkpoint_path=None):
     model = new_model()
     print("initialized new model")
 
+  if weights_path is not None:
+    model.load_weights(weights_path)
+    print("Loaded weights from {}".format(weights_path))
+
   if num_epoch is None:
     num_epoch = DEFAULT_NUM_EPOCH
 
   callbacks = []
   if checkpoint_path is not None:
-    checkpointer = ModelCheckpoint(checkpoint_path, monitor="val_acc", mode="max", save_best_only=True, save_weights_only=True)
+    checkpointer = ModelCheckpoint(checkpoint_path, monitor="val_acc", mode="max", save_best_only=True)
     callbacks.append(checkpointer)
   # Set default directories
   data_path = 'data/'
@@ -131,6 +135,7 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Baseline NN')
   parser.add_argument('-p', '--model_path', dest='model_path')
   parser.add_argument('-e', '--num_epoch', dest='num_epoch', type=int)
-  parser.add_argument('-c', '--checkpoint', dest='checkpoint_path')
+  parser.add_argument('-c', '--checkpoints_path', dest='checkpoint_path')
+  parser.add_argument('-w', '--weights_path', dest='weights_path')
   args = parser.parse_args()
   train(**vars(args))
