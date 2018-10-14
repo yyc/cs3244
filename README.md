@@ -68,6 +68,31 @@ combinations with `1` or `0`.
 
 Plan B: Use `ijson` to stream json data, use `pandas` to visualise the data for sanity check, create a function that can return a random set of data for training.
 
+### Sanity check
+
+Using `print food_compositions.groupby('ingredient')[u'food'].nunique()` on a small segment of data:
+
+```
+non - fat vanilla yogurt                                          1
+olive oil                                                         1
+penne                                                             1
+pimentos                                                          1
+pineapple chunks                                                  1
+raw zucchini                                                      1
+red bell pepper                                                   1
+red onion                                                         1
+salt                                                              2
+salt and black pepper                                             1
+seedless watermelon                                               1
+shredded coconut                                                  1
+soy sauce                                                         1
+strawberries                                                      1
+strawberry Jell - O gelatin dessert                               1
+sugar                                                             1
+tea                                                               1
+tomatoes                                                          1
+```
+
 ## 3. Train a classifier
 
 ** TODO, NOT DONE **
