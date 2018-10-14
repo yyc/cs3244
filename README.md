@@ -64,7 +64,9 @@ Training data format will be:
 We want both positive and negative training examples, and thus we label the
 combinations with `1` or `0`. 
 
-I decided to use a tiny database [TinyDB](https://pypi.org/project/tinydb/) to store the training data created. I don't want to overheat my MBP, which is possible if I were to load the entire file into memory.
+~~Plan A: I decided to use a tiny database [TinyDB](https://pypi.org/project/tinydb/) to store the training data created. I don't want to overheat my MBP, which is possible if I were to load the entire file into memory.~~
+
+Plan B: Use `ijson` to stream json data, use `pandas` to visualise the data for sanity check, create a function that can return a random set of data for training.
 
 ## 3. Train a classifier
 
@@ -94,3 +96,4 @@ Save NN, extract embeddings
 * https://towardsdatascience.com/deep-learning-4-embedding-layers-f9a02d55ac12
 * https://stats.stackexchange.com/questions/270546/how-does-keras-embedding-layer-work
 * https://medium.com/@satnalikamayank12/on-learning-embeddings-for-categorical-data-using-keras-165ff2773fc9
+* https://www.dataquest.io/blog/python-json-tutorial/
