@@ -18,7 +18,7 @@ do
     ending_ind=$((($cnt+1) * $CHARS_PER_CHUNK))
     filename="_"
     echo "$starting_ind to $ending_ind"
-    cat det_ingrs.json | cut -c $starting_ind-$ending_ind > det_ingrs_trunc_$starting_ind_$ending_ind.json    
+    cat $FILENAME | cut -c $starting_ind-$ending_ind > det_ingrs_trunc_$starting_ind_$ending_ind.json    
     cnt=$(($cnt + 1))
 done
 
