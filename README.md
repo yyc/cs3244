@@ -129,7 +129,21 @@ and `food_compositions.groupby('ingredient')['food'].nunique().sort_values(ascen
 ```
 **Observation:** Data is not entirely clean, there are ingredients that need to be removed/edited.
 
-Also, since reading`1000000` ingredients takes about `486` seconds on my computer (Intel(R) Core(TM) i5-4460S CPU @ 2.90GHz), we have decided to split training data into packets of `1000000` positives and negatives.
+Also, since reading `1000000` food rows takes about `486` seconds on my computer (Intel(R) Core(TM) i5-4460S CPU @ 2.90GHz), we have decided to split training data into packets of `1000000` positives and negatives.
+
+### Preparing Training Packets
+
+#### Mixing round 1
+
+Each training packet will contain `50%` of data from json, and `50%` from negative training inputs.
+
+See `prepare_training_packet.py` for implementation.
+
+#### Mixing round 2
+
+**Future**
+
+We will intersperse training data around the different training packets to see how training performance varies.
 
 ## 3. Train a classifier
 
