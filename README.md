@@ -147,19 +147,20 @@ We will intersperse training data around the different training packets to see h
 
 ## 3. Train a classifier
 
-** TODO, NOT DONE **
+![Tensorflow Model Creation](report/tensorflow_model_creation.png?raw=true "Model Creation")
+
 
 Sketch:
 
-Input will be food and ingredient.
+* Input will be food and ingredient.
 
-Every epoch, load a set of training examples and run them
+* Every epoch, load a set of training examples and run them
 
-There should be a general decreasing loss result.
+* There should be a general decreasing loss result.
 
-Train NN classifier until low loss is seen.
+* Train NN classifier until low loss is seen.
 
-Save NN, extract embeddings
+* Save NN, extract embeddings
 
 ## 4. Test results
 
