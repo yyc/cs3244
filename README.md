@@ -15,7 +15,7 @@ based on their ingredients. This is part of our project to extend this
 5. [ ] Run NN
 5. [ ] Sanity check on results
 6. [ ] Repeat above with more data
-7. [ ] Integrate with NNs done by the rest 
+7. [ ] Integrate with NNs done by the rest
 
 ## 0. Finding data
 
@@ -52,17 +52,17 @@ Since the size of raw data is 361085654 bytes, I will be splitting json file int
 
 Using a bash script (see `split_det_ingrs.sh`), split `det_ingrs.json` into
 smaller files. Note that json structures will be broken for the smaller files
-and they will be manually edited. 
+and they will be manually edited.
 
 There might be an easier way to achieve this, but this dirty method works for memory poor me.
 
 ## 2. For each ingredient object, split them into our training data format.
 
-Training data format will be: 
+Training data format will be:
 `(name of food, ingredient in food, whether ingredient is in food)`
 
 We want both positive and negative training examples, and thus we label the
-combinations with `1` or `0`. 
+combinations with `1` or `0`.
 
 ~~Plan A: I decided to use a tiny database [TinyDB](https://pypi.org/project/tinydb/) to store the training data created. I don't want to overheat my MBP, which is possible if I were to load the entire file into memory.~~
 
@@ -93,13 +93,51 @@ tea                                                               1
 tomatoes                                                          1
 ```
 
+and `food_compositions.groupby('ingredient')['food'].nunique().sort_values(ascending=False).reset_index(name='count')`
+
+```
+0 salt 3294
+1 butter 2116
+2 sugar 1850
+3 olive oil 1487
+4 water 1457
+5 eggs 1437
+6 garlic cloves 1241
+7 onion 973
+8 milk 969
+9 flour 912
+10 all - purpose flour 908
+11 onions 855
+12 egg 810
+13 baking powder 691
+14 pepper 686
+15 brown sugar 652
+16 unsalted butter 646
+17 vegetable oil 630
+18 vanilla extract 594
+19 baking soda 580
+20 salt and pepper 557
+21 lemon juice 513
+22 parmesan cheese 500
+23 garlic clove 497
+24 black pepper 480
+25 tomatoes 477
+26 vanilla 473
+27 garlic 456
+28 honey 446
+29 carrots 444
+```
+**Observation:** Data is not entirely clean, there are ingredients that need to be removed/edited.
+
+Also, since reading`1000000` ingredients takes about `486` seconds on my computer (Intel(R) Core(TM) i5-4460S CPU @ 2.90GHz), we have decided to split training data into packets of `1000000` positives and negatives.
+
 ## 3. Train a classifier
 
 ** TODO, NOT DONE **
 
 Sketch:
 
-Input will be food and ingredient. 
+Input will be food and ingredient.
 
 Every epoch, load a set of training examples and run them
 

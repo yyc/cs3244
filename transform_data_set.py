@@ -8,7 +8,7 @@ FOOD_INGREDIENTS_KEY = 'ingredients'
 FOOD_ID_KEY = 'id'
 INGREDIENT_TEXT_KEY = 'text'
 
-FOOD_PARSING_LIMIT = 10
+FOOD_PARSING_LIMIT = 1000000
 
 count = 1
 
@@ -24,8 +24,6 @@ with open(datafilename, 'r') as f:
         ingredients_list = [[food_id, i[INGREDIENT_TEXT_KEY]] for i in row[FOOD_INGREDIENTS_KEY]]
 
         print count
-        print food_id
-        print ingredients_list
 
         pd_data_values.extend(ingredients_list)
 
@@ -35,4 +33,7 @@ with open(datafilename, 'r') as f:
             break
 
 food_compositions = pd.DataFrame(pd_data_values, columns=pd_data_columns)
-print food_compositions.groupby('ingredient')[u'food'].nunique()
+print food_compositions.groupby('food')['ingredient'].nunique()
+#print food_compositions.groupby('ingredient')['food'].nunique().sort_values(ascending=False).reset_index(name='count')
+
+#print food_compositions.groupby('food')['ingredient'].nunique()
