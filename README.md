@@ -11,7 +11,7 @@ based on their ingredients. This is part of our project to extend this
 1. [X] Understand embeddings
 2. [X] Understand Keras
 3. [X] Tidy Data
-4. [ ] Construct NN
+4. [X] Construct NN
 5. [ ] Run NN
 5. [ ] Sanity check on results
 6. [ ] Repeat above with more data
