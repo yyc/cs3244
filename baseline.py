@@ -41,7 +41,12 @@ def new_model():
   for layer in resnet.layers:
     layer.trainable = False
   top_model = Sequential()
-  top_model.add(Dense(1048, activation='linear'))
+  top_model.add(Dropout(0.2))
+  top_model.add(Dense(4096, activation='relu'))
+  top_model.add(Dropout(0.2))
+  top_model.add(Dense(3072, activation='relu'))
+  top_model.add(Dropout(0.2))
+  top_model.add(Dense(2048, activation='relu'))
   top_model.add(Dropout(0.2))
   top_model.add(Dense(1048, activation='softmax'))
   model = Model(inputs=resnet.input, outputs=top_model(resnet.output))
@@ -70,7 +75,11 @@ def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH, checkpoint_path=None, we
 
   callbacks = []
   if checkpoint_path is not None:
-    checkpointer = ModelCheckpoint(checkpoint_path, monitor="val_acc", mode="max", save_best_only=True)
+    checkpointer = ModelCheckpoint(
+      checkpoint_path,
+      monitor="val_acc",
+      save_best_only=True
+    )
     callbacks.append(checkpointer)
   # Set default directories
   data_path = 'data/'
@@ -86,15 +95,20 @@ def train(model_path=None, num_epoch=DEFAULT_NUM_EPOCH, checkpoint_path=None, we
   db = h5py.File(db_path, 'r')
 
   model.compile(loss='categorical_crossentropy', optimizer='SGD', metrics=['accuracy'])
-  model.fit_generator(
-    batch_generator(db, batch_size=BATCH_SIZE,partition='train'), 
-    validation_data=batch_generator(db, batch_size=BATCH_SIZE, partition='val'),
-    steps_per_epoch=math.floor(238459 / BATCH_SIZE),
-    validation_steps=math.floor(51129 / BATCH_SIZE),
-    epochs=num_epoch,
-    verbose=1,
-    callbacks=callbacks
-  )
+  try:
+    model.fit_generator(
+      batch_generator(db, batch_size=BATCH_SIZE,partition='train'), 
+      validation_data=batch_generator(db, batch_size=BATCH_SIZE, partition='val'),
+      steps_per_epoch=math.floor(238459 / BATCH_SIZE),
+      validation_steps=math.floor(51129 / BATCH_SIZE),
+      epochs=num_epoch,
+      verbose=1,
+      callbacks=callbacks
+    )
+  except:
+    print("Encountered error. Saving current weights as {}".format(model_path + ".wgts"))
+    model.save_weights(model_path + ".wgts")
+    raise
 
   model.save(model_path)
 
