@@ -80,12 +80,12 @@ def train_func_for_bo(model_path=None, checkpoint_path=None):
 
         model.compile(loss='categorical_crossentropy', optimizer='SGD', metrics=['accuracy'])
         model.fit_generator(
-            batch_generator(db, batch_size=batch_size, partition='val'),# todo change back
+            batch_generator(db, batch_size=batch_size, partition='train'),
             validation_data=batch_generator(db, batch_size=batch_size, partition='val'),
-            steps_per_epoch=math.floor(1),#238459 / batch_size), todo changeback
-            validation_steps=math.floor(1), #51129 / batch_size), todo changeback
+            steps_per_epoch=math.floor(238459 / batch_size),
+            validation_steps=math.floor(51129 / batch_size),
             epochs=epochs,
-            verbose=2,#todo changeback
+            verbose=1,
             callbacks=callbacks
         )
 
@@ -142,10 +142,10 @@ def train_w_bo(model_path=None, checkpoint_path=None, num_exp=1):
     if model_path is None:
         model_path = DEFAULT_MODEL_PATH
 
-    bounds = [{'name': 'nodes', 'type': 'discrete', 'domain': (1,)},#(64, 128, 256, 512, 1024, 2048)},
-              {'name': 'layers', 'type': 'discrete', 'domain': (1,)},#(4, 8, 12, 16, 20, 24, 28, 32)},
-              {'name': 'batch_size', 'type': 'discrete', 'domain': (5,10)},#10, 100, 250, 500)},
-              {'name': 'epochs', 'type': 'discrete', 'domain': (1,)},#40, 80, 120, 160, 200)}, # todo change back
+    bounds = [{'name': 'nodes', 'type': 'discrete', 'domain': (64, 128, 256, 512, 1024, 2048)},
+              {'name': 'layers', 'type': 'discrete', 'domain': (4, 8, 12, 16, 20, 24, 28, 32)},
+              {'name': 'batch_size', 'type': 'discrete', 'domain': (10, 100, 250, 500)},
+              {'name': 'epochs', 'type': 'discrete', 'domain': (40, 80, 120, 160, 200)},
               {'name': 'dropout', 'type': 'continuous', 'domain': (.0, .5)}]
 
     train = train_func_for_bo(model_path=model_path, checkpoint_path=checkpoint_path)
