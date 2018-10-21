@@ -19,8 +19,6 @@ bo = GPyOpt.methods.BayesianOptimization(f=None, domain=bounds, X=X_init, Y=Y_in
                                          kernel=GPy.kern.Matern32(len(bounds), ARD=True),
                                          acquisition_type='EI', model_type='GP', ARD=True)
 bo.model.optimize_restarts = 10
-bo.model.updateModel(X_init, Y_init, None, None)
-# print(bo.model.model)
 x_next = bo.suggest_next_locations()
 print("Use hyperparameters:")
 print(x_next)
