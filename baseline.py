@@ -45,7 +45,9 @@ def new_model():
   top_model.add(Dense(4096, activation='relu'))
   top_model.add(Dropout(0.2))
   top_model.add(Dense(3072, activation='relu'))
-  top_model.add(Dropout(0.2))
+  top_model.add(Dense(3072, activation='relu'))
+  top_model.add(Dense(3072, activation='relu'))
+  top_model.add(Dense(3072, activation='relu'))
   top_model.add(Dense(2048, activation='relu'))
   top_model.add(Dropout(0.2))
   top_model.add(Dense(1048, activation='softmax'))
@@ -139,7 +141,8 @@ def batch_generator(db, batch_size=100, partition='train'):
 
     batch_x = np.array(images)
     batch_y = to_categorical(categories, 1048)
-    yield( batch_x, batch_y )
+    if len(images) > 0:
+      yield( batch_x, batch_y ) 
 
 
 def test():
