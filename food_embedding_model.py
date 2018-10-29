@@ -61,10 +61,14 @@ model.compile(optimizer='SGD', loss = 'binary_crossentropy', metrics = ['accurac
 
 print model.summary()
 
+cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
+
 #food_id = food_compositions['food'].apply(lambda x: 1)
 food_col = food_compositions[[pd_data_columns[0]]]
 ingredient_col = food_compositions[[pd_data_columns[1]]]
 correct_output_col = food_compositions.iloc[:,-1]
-model.fit(x=[food_col, ingredient_col], y=correct_output_col, verbose=2, epochs=15, steps_per_epoch=1000)
+model.fit(x=[food_col, ingredient_col], y=correct_output_col, verbose=2, epochs=15, steps_per_epoch=1000, callbacks = [cp_callback])
 
 model.save('./models/model.h5')
