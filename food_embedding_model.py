@@ -1,5 +1,6 @@
 import ijson as ijs
 import json
+from keras.callbacks import ModelCheckpoint
 from keras.layers import Input, Embedding, Dot, Reshape, Dense
 from keras.models import Model
 import pandas as pd
@@ -12,7 +13,7 @@ recorder = FoodIngredientRecorder.FoodIngredientRecorder()
 pd_data_values  = []
 pd_data_columns = ['food_id', 'ingredient_id','train']
 
-TRAINING_PACKET_FILENAME = "full_training_packet_part2.json"
+TRAINING_PACKET_FILENAME = "full_training.json"
 
 with open(TRAINING_PACKET_FILENAME, 'r') as f:
     food = ijs.items(f, 'item')
@@ -61,14 +62,14 @@ model.compile(optimizer='SGD', loss = 'binary_crossentropy', metrics = ['accurac
 
 print model.summary()
 
-cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
-                                                 save_weights_only=True,
-                                                 verbose=1)
+cp_callback = ModelCheckpoint("./models/checkpoints.ckpt",
+                              save_weights_only=True,
+                              verbose=1)
 
 #food_id = food_compositions['food'].apply(lambda x: 1)
 food_col = food_compositions[[pd_data_columns[0]]]
 ingredient_col = food_compositions[[pd_data_columns[1]]]
 correct_output_col = food_compositions.iloc[:,-1]
-model.fit(x=[food_col, ingredient_col], y=correct_output_col, verbose=2, epochs=15, steps_per_epoch=1000, callbacks = [cp_callback])
+model.fit(x=[food_col, ingredient_col], y=correct_output_col, verbose=2, epochs=150, steps_per_epoch=1000, callbacks = [cp_callback])
 
 model.save('./models/model.h5')
