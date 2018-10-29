@@ -10,7 +10,7 @@ import FoodIngredientRecorder as FoodIngredientRecorder
 recorder = FoodIngredientRecorder.FoodIngredientRecorder()
 #####################################################
 
-pd_data_values  = []
+pd_data_values = []
 pd_data_columns = ['food_id', 'ingredient_id','train']
 
 TRAINING_PACKET_FILENAME = "full_training.json"
@@ -21,10 +21,11 @@ with open(TRAINING_PACKET_FILENAME, 'r') as f:
     for x in food:
         try:
             row = json.loads(json.dumps(x))
-            print row
+
             transformed_row = recorder.process_and_record(row[0], row[1])
             transformed_row.append(row[2])
-            print transformed_row
+            if count % 1000 == 0:
+                print("{}: {} \t {}".format(count, row, transformed_row))
             pd_data_values.extend([transformed_row])
         except UnicodeEncodeError:
             None
@@ -60,7 +61,7 @@ merged = Dense(1, activation = 'sigmoid')(combination)
 model = Model(inputs = [food, ingredient], outputs = merged)
 model.compile(optimizer='SGD', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
-print model.summary()
+print(model.summary())
 
 cp_callback = ModelCheckpoint("./models/checkpoints.ckpt",
                               save_weights_only=True,
