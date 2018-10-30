@@ -3,6 +3,7 @@ import pickle
 from keras.callbacks import ModelCheckpoint
 from keras.layers import Input, Embedding, Dot, Reshape, Dense
 from keras.models import Sequential, Model, load_model
+from keras.optimizers import SGD
 import pandas as pd
 import argparse
 import os
@@ -70,22 +71,44 @@ def get_model(recorder):
     merged = Dense(1, activation = 'sigmoid')(combination)
 
     model = Model(inputs = [food, ingredient], outputs = merged)
-    model.compile(optimizer='SGD', loss = 'binary_crossentropy', metrics = ['accuracy'])
+
+    optimizer = SGD(lr=0.05, momentum=0.1)
+    model.compile(
+        optimizer=optimizer,
+        loss = 'binary_crossentropy',
+        metrics = ['accuracy']
+    )
 
     print(model.summary())
 
     return model
 
 
-def train(filename=TRAINING_PACKET_FILENAME, model_path='./models/model.h5', num_epoch=10, batch_size=BATCH_SIZE):
+def train(
+        filename=TRAINING_PACKET_FILENAME,
+        model_path='./models/model.h5',
+        num_epoch=10,
+        batch_size=BATCH_SIZE,
+        weights_path=None,
+        checkpoint_path="models/embedding-{acc:.2f}.h5"
+    ):
     recorder, food_compositions = fetch_recorder(filename)
-    cp_callback = ModelCheckpoint("models/embedding{epoch:02d}-{train_loss:.2f}.h5",
+    cp_callback = ModelCheckpoint(checkpoint_path,
+                                  monitor='loss',
                                   save_weights_only=False,
+                                  save_best_only=True,
                                   verbose=1)
-    # if os.path.exists(model_path):
-    #     model = load_model(model_path)
-    # else:
-    model = get_model(recorder)
+
+    if weights_path and os.path.exists(weights_path):
+        model = get_model(recorder)
+        model.load_weights(weights_path)
+        print("Loaded weights from {}".format(weights_path))
+    elif os.path.exists(model_path):
+        model = load_model(model_path)
+        print("loaded Existing model {}".format(model_path))
+    else:
+        model = get_model(recorder)
+        print("initialized new model(")
 
     columns = food_compositions.columns
 
@@ -100,7 +123,7 @@ def train(filename=TRAINING_PACKET_FILENAME, model_path='./models/model.h5', num
         training_generator(batch_size, food_col, ingredient_col, correct_output_col),
         verbose=1,
         epochs=num_epoch,
-        steps_per_epoch=math.ceil(count / batch_size),
+        steps_per_epoch=10*math.ceil(count / batch_size),
         callbacks=[cp_callback]
     )
 
@@ -123,7 +146,9 @@ def training_generator(batch_size, food, ingredients, correct):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Baseline NN')
-    parser.add_argument('-p', '--model_path', dest='model_path')
+    parser.add_argument('-m', '--model_path', dest='model_path')
+    parser.add_argument('-c', '--checkpoint_path', dest='checkpoint_path')
+    parser.add_argument('-w', '--weights_path', dest='weights_path')
     parser.add_argument('-e', '--num_epoch', dest='num_epoch', type=int)
     parser.add_argument('-f', '--data_file', dest='filename')
     parser.add_argument('-b', '--batch_size', dest='batch_size', type=int)
