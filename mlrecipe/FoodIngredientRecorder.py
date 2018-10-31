@@ -16,7 +16,7 @@ class FoodIngredientRecorder:
         self.ingredient_int_to_name = {}
         self.ingredient_name_to_int = {}
 
-    def save(self, directory="/food_ingredients_lookup/"):
+    def save(self):
         food_int_to_id_path = "food_int_to_id.p"
         food_id_to_int_path = "food_id_to_int.p"
         ingredient_int_to_name_path = "ingredient_int_to_name.p"
