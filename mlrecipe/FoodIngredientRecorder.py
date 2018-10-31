@@ -1,6 +1,8 @@
 """
 Stores food and ingredient for easy lookup
 """
+import pickle
+
 class FoodIngredientRecorder:
     def __init__(self):
         # food comes originally with an id
@@ -14,8 +16,21 @@ class FoodIngredientRecorder:
         self.ingredient_int_to_name = {}
         self.ingredient_name_to_int = {}
 
+    def save(self):
+        food_int_to_id_path = "food_int_to_id.p"
+        food_id_to_int_path = "food_id_to_int.p"
+        ingredient_int_to_name_path = "ingredient_int_to_name.p"
+        ingredient_name_to_int_path = "ingredient_name_to_int.p"
+
+        pickle.dump(self.food_int_to_id, open(food_int_to_id_path, "wb"))
+        pickle.dump(self.food_id_to_int, open(food_id_to_int_path, "wb"))
+        pickle.dump(self.ingredient_int_to_name, open(ingredient_int_to_name_path, "wb"))
+        pickle.dump(self.ingredient_name_to_int, open(ingredient_name_to_int_path, "wb"))
+
+        print("saved")
+
     def process_and_record(self, fid, iname):
-        # print ("fid:{} iname: {}".format(fid, iname))
+        print "fid:{} iname: {}".format(fid, iname)
         if fid not in self.food_id_to_int:
             # Add new mapping from food_id to int
             self.food_id_to_int[fid] = self.fcount
