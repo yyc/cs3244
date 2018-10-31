@@ -42,7 +42,7 @@ def fetch_recorder(filename):
             recorder.process_and_record(row[0], row[1]) + [row[2]]
             for row in food
         ]
-
+    recorder.save()
     compositions = pd.DataFrame(pd_data_values, columns=pd_data_columns)
     return recorder, compositions
 
