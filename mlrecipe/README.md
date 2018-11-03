@@ -12,7 +12,7 @@ based on their ingredients. This is part of our project to extend this
 2. [X] Understand Keras
 3. [X] Tidy Data
 4. [X] Construct NN
-5. [ ] Run NN
+5. [X] Run NN
 5. [ ] Sanity check on results
 6. [ ] Repeat above with more data
 7. [ ] Integrate with NNs done by the rest
@@ -161,6 +161,31 @@ Sketch:
 * Train NN classifier until low loss is seen.
 
 * Save NN, extract embeddings
+
+## 4. Optimizations for Training
+(see training.txt uploaded later)
+Initial parameters: (batch size: 100, epochs: 100, learning rate: 0.01)
+Initial run resulted in a very slow training, approximately 0.0001 improvement in accuracy and loss per epoch (approximately 10 seconds)
+GPU RAM wasn't fully utilized, so reasoned that we could probably increase the batch size. Since the number of parameters is relatively small, tried an exponential search method and eventually found a maximum
+of batch_size: 100000 without causing an OOM error
+
+(batch_size:100000, epochs: 100, learning rate: 0.01)
+Massive decrease in training time: Each epoch takes 10 seconds instead of 40 seconds
+However, improvement rate stays the same at 0.0001 per epoch
+
+Added momentum and increased learning rate
+Increased number of epochs to let it run several hours
+(batch_size:100000, epochs: 10000, learning rate: 0.02, momentum: 0.01)
+Learning is not noticeably faster, still increases with approximately 0.0001 per epoch
+ending acc: 0.58
+
+Bumped momentum and learning rate, increased steps in each epoch
+Realized that there's some overhead that goes on with each epoch (model checkpointing, validation), makes up a significant part of the time taken/epoch.
+TO fix this, increase the step count for each epoch so there's more training going on (multiple passes over the dataset are made) for each epoch.
+(batch_size:100000, epochs: 100, learning_rate: 0.05, momentum: 0.1, passes: 10)
+Massive increase in training: in approximately 6 hours, jumped from 0.58 to 0.93
+
+
 
 ## 4. Test results
 
