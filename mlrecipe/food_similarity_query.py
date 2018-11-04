@@ -42,9 +42,9 @@ class FoodSimilarityQuery:
         except KeyError as e:
             print("Illegal index! Heckin bork! {}".format(e.message))
 
-    def get_embedding(self, eid):
+    def get_embedding(self, fid):
         try:
-            ind = self.food_id_to_int[eid]
+            ind = self.food_id_to_int[fid]
 
             return self.weights[ind]
 
