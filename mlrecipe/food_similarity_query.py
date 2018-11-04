@@ -27,7 +27,6 @@ class FoodSimilarityQuery:
 
         self.weights = food_weights / np.linalg.norm(food_weights, axis = 1).reshape((-1, 1))
 
-# Load lookup table
     def __load_food_id_to_int(self, path):
         print("Loading {}".format(path))
         self.food_id_to_int = pickle.load(open(path, "rb"))
@@ -43,10 +42,19 @@ class FoodSimilarityQuery:
         except KeyError as e:
             print("Illegal index! Heckin bork! {}".format(e.message))
 
+    def get_embedding(self, eid):
+        try:
+            ind = self.food_id_to_int[eid]
+
+            return self.weights[ind]
+
+        except KeyError as e:
+            print("Illegal index! Heckin bork! {}".format(e.message))
         #INDEX_TO_FIND = 0
 	    #dists = np.dot(food_weights, food_weights[INDEX_TO_FIND])
 	    #sorted_dists = np.argsort(-dists)
 
 if __name__ == '__main__':
     x = FoodSimilarityQuery("models/embedding-0.99.h5", "food_id_to_int.p")
+
     import pdb; pdb.set_trace()
