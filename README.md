@@ -5,6 +5,12 @@ Component Regularization for Domain-Specific Image Classification
 
 ### Baseline
 
+### Exp2a
+
+```
+python2 exp2a.py --num_epoch 40
+```
+
 ## Overview
 
 Experiment1 Baseline model - `baseline.py`
