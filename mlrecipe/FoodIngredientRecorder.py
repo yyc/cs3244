@@ -30,8 +30,9 @@ class FoodIngredientRecorder:
         print("saved")
 
     def process_and_record(self, fid, iname):
-        print "fid:{} iname: {}".format(fid, iname)
+        # print("fid:{} iname: {}".format(fid, iname))
         if fid not in self.food_id_to_int:
+
             # Add new mapping from food_id to int
             self.food_id_to_int[fid] = self.fcount
 

@@ -2,8 +2,6 @@
 Query model for foodsimilarity
 """
 import argparse
-import ijson as ijs
-import json
 from keras.layers import Input, Embedding, Dot, Reshape, Dense
 from keras.models import Model, load_model
 import numpy as np
@@ -32,6 +30,14 @@ class FoodSimilarityQuery:
         self.food_id_to_int = pickle.load(open(path, "rb"))
         print("Loading done!")
 
+    def get_vector_for_food(self, id):
+        try:
+            index = self.food_id_to_int[id]
+            return self.weights[index]
+        except KeyError as e:
+            # print("Illegal index {}".format(id))
+            return []
+
     def check(self, id1, id2):
         try:
             index1 = self.food_id_to_int[id1]
@@ -56,5 +62,4 @@ class FoodSimilarityQuery:
 
 if __name__ == '__main__':
     x = FoodSimilarityQuery("models/embedding-0.99.h5", "food_id_to_int.p")
-
     import pdb; pdb.set_trace()
