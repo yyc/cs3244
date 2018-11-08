@@ -31,13 +31,7 @@ class FoodSimilarityQuery:
         print("Loading done!")
 
     def get_vector_for_food(self, id):
-        try:
-            index = self.food_id_to_int[id]
-            return self.weights[index]
-        except KeyError as e:
-            # print("Illegal index {}".format(id))
-            return []
-
+        return self.get_embedding(id)
     def check(self, id1, id2):
         try:
             index1 = self.food_id_to_int[id1]
