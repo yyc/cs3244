@@ -162,10 +162,6 @@ def batch_generator(db, fsq, batch_size=100, partition='train', augment=False):
       # Experiment with ignoring category 1 (peanut butter, comprising half of
       # all)
       category = classes[i]
-      if category == 0 or category == 1:
-        # print("Skipping PB {}".format(id))
-        continue
-      category = category - 1
       ingr = fsq.get_vector_for_food(id)
       if len(ingr) == 0:
         continue
